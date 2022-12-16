@@ -6,11 +6,10 @@ from . import proofpile_tf
 
 class ProofpileTfTest(tfds.testing.DatasetBuilderTestCase):
   """Tests for proofpile_tf dataset."""
-  # TODO(proofpile_tf):
   DATASET_CLASS = proofpile_tf.ProofpileTf
   SPLITS = {
-      'train': 3,  # Number of fake train example
-      'test': 1,  # Number of fake test example
+      'train': 779955,  # Number of fake train example
+      'test': 13172,  # Number of fake test example
   }
 
   # If you are calling `download/download_and_extract` with a dict, like:
