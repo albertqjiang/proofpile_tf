@@ -61,8 +61,8 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
 
     # Returns the Dict[split names, Iterator[Key, Example]]
     return {
-        'train': self._generate_examples(path / 'train_lines.jsonl'),
-        'test': self._generate_examples(path / 'test_lines.jsonl'),
+        'train': self._generate_examples(path / 'pp_data' / 'train_lines.jsonl'),
+        'test': self._generate_examples(path / 'pp_data' / 'test_lines.jsonl'),
     }
   
 
