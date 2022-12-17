@@ -71,9 +71,12 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
     with open(path) as fhand:
       for line in fhand.readlines():
         line_content = json.loads(line.strip())
-        yield 'key', {
-          "text": line_content['text'],
-          "type": self.process_metadata(line_content['meta'])
+        text = line_content['text']
+        text_type = self.process_metadata(line_content['meta'])
+        key = f"{text_type}-{hash(text)}"
+        yield key, {
+          "text": text,
+          "type": text_type
         }
   
   @staticmethod
