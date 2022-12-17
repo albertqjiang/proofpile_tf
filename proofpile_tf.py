@@ -57,8 +57,7 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
-    path = dl_manager.download_and_extract('https://archive.org/download/compressed_pp/pp_data.tar.gz', )
-
+    path = dl_manager.download_and_extract('gs://n2formal-public-data-europe/verifier/proofpile/pp_data.tar.gz')
     # Returns the Dict[split names, Iterator[Key, Example]]
     return {
         'train': self._generate_examples(path / 'pp_data' / 'train_lines.jsonl'),
