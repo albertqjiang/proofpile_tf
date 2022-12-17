@@ -37,6 +37,8 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
       '1.0.0': 'Initial release.',
   }
 
+  
+
   def _info(self) -> tfds.core.DatasetInfo:
     """Returns the dataset metadata."""
     return tfds.core.DatasetInfo(
@@ -67,13 +69,17 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
 
   def _generate_examples(self, path):
     """Yields examples."""
-    # TODO(proofpile_tf): Yields (key, example) tuples from the dataset
+    yield_register = set()
     with open(path) as fhand:
       for line in fhand.readlines():
         line_content = json.loads(line.strip())
         text = line_content['text']
         text_type = self.process_metadata(line_content['meta'])
         key = f"{text_type}-{hash(text)}"
+        if key in yield_register:
+          continue
+        else:
+          yield_register.add(key)
         yield key, {
           "text": text,
           "type": text_type
