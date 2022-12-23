@@ -1,6 +1,7 @@
 """proofpile_tf dataset."""
 import tensorflow_datasets as tfds
 import json
+import math
 
 _DESCRIPTION = """
 A TFDS version of the proof-pile dataset.
@@ -47,7 +48,7 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
         features=tfds.features.FeaturesDict({
             # These are the features of your dataset like images, labels ...
             'text': tfds.features.Text(),
-            'type': tfds.features.Text(),
+            'context': tfds.features.Text(),
         }),
         # If there's a common (input, target) tuple from the
         # features, specify them here. They'll be used if
@@ -63,6 +64,7 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
     # Returns the Dict[split names, Iterator[Key, Example]]
     return {
         'train': self._generate_examples(path / 'pp_data' / 'train_lines.jsonl'),
+        "train_eval": self._generate_examples(path / 'pp_data' / 'train_eval_lines.jsonl'),
         'test': self._generate_examples(path / 'pp_data' / 'test_lines.jsonl'),
     }
   
@@ -75,16 +77,26 @@ class ProofpileTf(tfds.core.GeneratorBasedBuilder):
         line_content = json.loads(line.strip())
         text = line_content['text']
         text_type = self.process_metadata(line_content['meta'])
-        key = f"{text_type}-{hash(text)}"
-        if key in yield_register:
-          continue
-        else:
-          yield_register.add(key)
-        yield key, {
-          "text": text,
-          "type": text_type
-        }
+
+        context = text_type
+        chunks = math.ceil(len(text)/1500)
+
+        for i in range(chunks):
+          chunk = text[i*1500:(i+1)*1500]
+          key = f"{text_type}-{hash(chunk)}"
+          if key in yield_register:
+            continue
+          else:
+            yield_register.add(key)
+            
+          datapoint = {
+            "text": chunk,
+            "context": context
+          }
+          context = chunk
+          yield key, datapoint
   
+
   @staticmethod
   def process_metadata(metadata):
     def get_type(meta):
